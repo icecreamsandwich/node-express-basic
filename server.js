@@ -12,13 +12,15 @@ mongoose.connect('mongodb://localhost/test',{'useNewUrlParser': true,'useCreateI
 
 //start the express server
 var app = express();
-/* app.engine('html', require('ejs').renderFile);
+app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
-app.set('views', __dirname); */
+app.set('pages', __dirname);
 
 function sendViewMiddleware(req, res, next) {
-    res.sendView = function (view) {
-        return res.sendFile(__dirname + "/pages/" + view + ".html");
+    res.sendView = function (view) { 
+        var session = (req.session.username) ? req.session.username : "";
+        res.render(__dirname + "/pages/" + view + ".html",session);
+        // return res.sendFile(__dirname + "/pages/" + view + ".html",params);
     }
     next();
 }
@@ -41,13 +43,12 @@ app.get('/logout', function (req, res) {
      req.session.destroy(function(){
         console.log("User successfully logged out")
      });
-    res.sendView("login")
+    res.redirect("/login")
 });
 
 function checkSignIn(req, res, next) {
     //check if the user exists
     if(req.session.user){
-        //console.log(req.session.user);
         next();
     }
     else{
@@ -64,6 +65,7 @@ function checkSignIn(req, res, next) {
                     res.send("Username is incorrect")
                 }
                 req.session.user =user;
+                req.session.username = {username:req.body.username};
                 var userPassword = "";
                 user.map(user => {
                      userPassword = user.password;
@@ -149,7 +151,7 @@ function checkSignIn(req, res, next) {
         }
     });
 
-
+//bind to a port
 var server = app.listen(3000, function () {
     var host = server.address().address
     var port = server.address().port
