@@ -2,6 +2,7 @@ var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var bcrypt = require('bcrypt');
+var session = require('express-session');
 var User = require("./models/user")
 
 //connect to mongodb
@@ -11,6 +12,9 @@ mongoose.connect('mongodb://localhost/test',{'useNewUrlParser': true,'useCreateI
 
 //start the express server
 var app = express();
+/* app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
+app.set('views', __dirname); */
 
 function sendViewMiddleware(req, res, next) {
     res.sendView = function (view) {
@@ -22,6 +26,7 @@ function sendViewMiddleware(req, res, next) {
 app.use(sendViewMiddleware);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({secret: "Your secret key"}));
 
 app.get('/', function (req, res) {
     res.sendView("login")
@@ -32,11 +37,23 @@ app.get('/login', function (req, res) {
 });
 
 app.get('/logout', function (req, res) {
+     //destroy the session
+     req.session.destroy(function(){
+        console.log("User successfully logged out")
+     });
     res.sendView("login")
 });
 
 function checkSignIn(req, res, next) {
     //check if the user exists
+    if(req.session.user){
+        //console.log(req.session.user);
+        next();
+    }
+    else{
+        console.log("User is not authenticated");
+        res.redirect('/login');
+    }
 }
 
     app.post('/login', function (req, res, next) {
@@ -46,6 +63,7 @@ function checkSignIn(req, res, next) {
                     console.log("Username is incorrect")
                     res.send("Username is incorrect")
                 }
+                req.session.user =user;
                 var userPassword = "";
                 user.map(user => {
                      userPassword = user.password;
@@ -56,9 +74,10 @@ function checkSignIn(req, res, next) {
                 if(!samePassword){
                     res.send("Password is incorrect")
                 }
-                else {
+                else {                   
                     console.log("password matched !")
-                    res.redirect("/home")
+                    res.status('200');
+                    res.sendView("home",{username:req.body.username})
                 }  
             })
             .catch(function(err){
@@ -74,7 +93,7 @@ function checkSignIn(req, res, next) {
         res.sendView("contact")
     });
 
-    app.get('/home', function (req, res) {
+    app.get('/home', checkSignIn,function (req, res) {
         res.sendView("home")
     });
     app.get('/signup', function (req, res) {
@@ -111,8 +130,11 @@ function checkSignIn(req, res, next) {
                     age: req.body.age,
                     nationality: req.body.nationality
                 });
+                
                 //save the user
                 newUser.save(function (err, Person) {
+                    //save the user to a session
+                    req.session.user =newUser;
                     console.log("user registered successfully")
                 });
             })
