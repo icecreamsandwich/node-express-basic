@@ -1,10 +1,14 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
+var bcrypt = require('bcrypt');
+var User = require("./models/user")
 
 //connect to mongodb
-mongoose.connect('mongodb://localhost/test');
-var User = require("./models/user")
+mongoose.connect('mongodb://localhost/test',{'useNewUrlParser': true,'useCreateIndex': true},function(req,res){
+    console.log("connected to mongo!!")
+});
+
 //start the express server
 var app = express();
 
@@ -23,63 +27,102 @@ app.get('/', function (req, res) {
     res.sendView("login")
 });
 
-function checkSignIn(req, res) {
-    if (req.body.username) {
-        next();     //If session exists, proceed to page
-    } else {
-        var err = new Error("Not logged in!");
-        console.log(req.session.user);
-        next(err);  //Error, trying to access unauthorized page!
-    }
+app.get('/login', function (req, res) {
+    res.sendView("login")
+});
+
+app.get('/logout', function (req, res) {
+    res.sendView("login")
+});
+
+function checkSignIn(req, res, next) {
+    //check if the user exists
 }
 
-    app.post('/login', function (req, res) {
-        var response = {
-            username: req.body.username,
-            password: req.body.password,
-        }
-        res.send(JSON.stringify(response));
-      /*   Person.findById(username, function(err, response){
-            console.log(response);
-            res.redirect("home")
-         },function(err){
-            res.status(500).json({message: 'This user does not exist'});
-            console.error(err);
-        }); */
+    app.post('/login', function (req, res, next) {
+        User.find({'username':req.body.username})
+            .then(function(user){
+                if((user.length	==  0) || typeof user == 'undefined'){
+                    console.log("Username is incorrect")
+                    res.send("Username is incorrect")
+                }
+                var userPassword = "";
+                user.map(user => {
+                     userPassword = user.password;
+                })
+                return bcrypt.compare(req.body.password,userPassword)
+            })
+            .then(function(samePassword){
+                if(!samePassword){
+                    res.send("Password is incorrect")
+                }
+                else {
+                    console.log("password matched !")
+                    res.redirect("/home")
+                }  
+            })
+            .catch(function(err){
+                console.log("Error:"+err)
+            });
     });
-    app.get('about', function (req, res) {
+
+    app.get('/about', function (req, res) {
         res.sendView("about")
     });
-    app.get('contact', function (req, res) {
+
+    app.get('/contact', function (req, res) {
         res.sendView("contact")
     });
 
-    app.get('home', checkSignIn, function (req, res) {
+    app.get('/home', function (req, res) {
         res.sendView("home")
     });
-    app.get('signup', function (req, res) {
+    app.get('/signup', function (req, res) {
         res.sendView("signup")
     });
-    app.post('signup', function (req, res) {
-        var Users = [];
+
+    app.post('/signup', function (req, res,next) {
         if (req.body.username == "" || req.body.password == "") {
             res.status("400")
             res.send("Please enter username and password")
         }
         else {
-            Users.filter(function (user) {
-                if (user.username == req.body.username) {
-                    res.sendView("signup", { message: "User already exists, please choose another username" });
+            //check username already exists
+            User.find({'username':req.body.username},function(err,user){
+                if(err){
+                    console.log("Signup error")
+                    return done(err);
                 }
-                var newUser = new User({
-                    name: personInfo.name,
-                    age: personInfo.age,
-                    nationality: personInfo.nationality
-                });
+                else{
+                    if(user.length !=0){
+                        console.log("username already exists")
+                        res.send("username already exists please choose a different one")
+                    }
+                }
+            });
 
-                newUser.save(function (err, Person) {
-                    res.redirect("home", { message: "Welcome user" });
+            var BCRYPT_SALT_ROUNDS = 12;
+            bcrypt.hash(req.body.password, BCRYPT_SALT_ROUNDS)
+            .then(function(hashedPassword) {
+                var newUser = new User({
+                    username: req.body.username,
+                    password: hashedPassword,
+                    name: req.body.name,
+                    age: req.body.age,
+                    nationality: req.body.nationality
                 });
+                //save the user
+                newUser.save(function (err, Person) {
+                    console.log("user registered successfully")
+                });
+            })
+            .then(function() {
+                res.redirect("/login");
+            })
+            .catch(function(error){
+                console.log("Error saving user: ");
+                console.log(error);
+                next();
             });
         }
     });
