@@ -3,13 +3,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>About</title>
 </head>
+<%include includes/header.html%>
 <body>
-    <div w3-include-html="includes/header.html"></div> 
-    <h2>This is about pages</h2>
+    <h2>This is about page</h2>
     <p>and you can do nice things here 
         <span>actually its a kind of boring</span>
     </p>
 </body>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.topnav a').removeClass('active');
+        $('.about').addClass('active');
+    });
+</script>
 </html>

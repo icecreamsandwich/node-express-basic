@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var bcrypt = require('bcrypt');
 var session = require('express-session');
 var User = require("./models/user")
+let path = require("path")
 
 //connect to mongodb
 mongoose.connect('mongodb://localhost/test',{'useNewUrlParser': true,'useCreateIndex': true},function(req,res){
@@ -17,10 +18,10 @@ app.set('view engine', 'html');
 app.set('pages', __dirname);
 
 function sendViewMiddleware(req, res, next) {
-    res.sendView = function (view) { 
+    res.sendView = function (view,param) { 
         var session = (req.session.username) ? req.session.username : "";
-        res.render(__dirname + "/pages/" + view + ".html",session);
-        // return res.sendFile(__dirname + "/pages/" + view + ".html",params);
+        if(param && param != "")res.render(__dirname + "/pages/" + view + ".html",param);
+        else res.render(__dirname + "/pages/" + view + ".html",session);
     }
     next();
 }
@@ -33,6 +34,7 @@ app.use(session({
     resave: true, 
     saveUninitialized: true 
 }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function (req, res) {
     res.sendView("login")
@@ -83,7 +85,7 @@ function checkSignIn(req, res, next) {
                 else {                   
                     console.log("password matched !")
                     res.status('200');
-                    res.sendView("home",{username:req.body.username})
+                    res.sendView("home")
                 }  
             })
             .catch(function(err){
@@ -91,12 +93,16 @@ function checkSignIn(req, res, next) {
             });
     });
 
-    app.get('/about', function (req, res) {
+    app.get('/about',checkSignIn, function (req, res) {
         res.sendView("about")
     });
 
-    app.get('/contact', function (req, res) {
+    app.get('/contact',checkSignIn, function (req, res) {
         res.sendView("contact")
+    });
+
+    app.get('/news',checkSignIn, function (req, res) {
+        res.sendView("news")
     });
 
     app.get('/home', checkSignIn,function (req, res) {
@@ -155,6 +161,18 @@ function checkSignIn(req, res, next) {
         }
     });
 
+    //get all users from db
+    app.get('/getusers',checkSignIn,function(req,res){
+        User.find().exec(function (err, doc) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+               // res.send(doc);
+                res.sendView("users_list",{users_list:doc})
+            }
+        });
+    });
 //bind to a port
 var server = app.listen(3000, function () {
     var host = server.address().address

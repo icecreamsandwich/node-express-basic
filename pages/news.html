@@ -1,0 +1,21 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<%include includes/header.html%>
+<body>
+    <h2>This is news page</h2>
+    <p>and you can do nice things here 
+        <span>actually its a kind of boring</span>
+    </p>
+</body>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.topnav a').removeClass('active');
+        $('.news').addClass('active');
+    });
+</script>
+</html>

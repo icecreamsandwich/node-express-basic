@@ -1,0 +1,31 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Users</title>
+</head>
+<%include includes/header.html%>
+<body>
+    <h2>Hi this is users list</h2>
+    <h2><%-users_list%></h2>
+    <table>
+        <th>Username</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Nationality</th>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+</body>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.topnav a').removeClass('active');
+        $('.users_list').addClass('active');
+    });
+</script>
+</html>

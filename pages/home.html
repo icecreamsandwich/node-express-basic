@@ -5,9 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
+<%include includes/header.html%>
 <body>
-    <div w3-include-html="includes/header.html"></div>
-    <h2>Hi <h1><%= username %> </h1> you logged in here !!</h2>
+    <h2>Hi <h1><%-username%> </h1> you logged in here !!</h2>
     <span>came by mistake ? <a href="/logout">Logout</a> here </span>
 </body>
 </html>
