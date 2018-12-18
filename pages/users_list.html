@@ -7,19 +7,21 @@
 </head>
 <%include includes/header.html%>
 <body>
-    <h2>Hi this is users list</h2>
-    <h2><%-users_list%></h2>
-    <table>
-        <th>Username</th>
-        <th>Name</th>
-        <th>Age</th>
-        <th>Nationality</th>
+<h2>Users</h2>
+    <table class="users_list">
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Nationality</th>
         </tr>
+        <% users_list.forEach(function(user) { %>
+            <tr>
+            <td><%= user.name %> </td>
+            <td><%= user.age %> </td>
+            <td><%= user.nationality %> </td>
+            </tr>
+        <% }); %>
+            
     </table>
 </body>
 <script type="text/javascript">
