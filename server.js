@@ -26,7 +26,11 @@ function sendViewMiddleware(req, res, next) {
 app.use(sendViewMiddleware);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({secret: "Your secret key"}));
+app.use(session({
+    secret: "Your secret key",
+    resave: true, 
+    saveUninitialized: true 
+}));
 
 app.get('/', function (req, res) {
     res.sendView("login")
@@ -105,7 +109,7 @@ function checkSignIn(req, res, next) {
             res.status("400")
             res.send("Please enter username and password")
         }
-        else {
+        else { 
             //check username already exists
             User.find({'username':req.body.username},function(err,user){
                 if(err){
