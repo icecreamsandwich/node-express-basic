@@ -4,7 +4,8 @@ var bodyParser = require('body-parser');
 var bcrypt = require('bcrypt');
 var session = require('express-session');
 var User = require("./models/user")
-let path = require("path")
+var path = require("path")
+const flash = require('express-flash-notification');
 
 //connect to mongodb
 mongoose.connect('mongodb://localhost/test',{'useNewUrlParser': true,'useCreateIndex': true},function(req,res){
@@ -16,6 +17,7 @@ var app = express();
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 app.set('pages', __dirname);
+app.set('views', __dirname + '/pages/');
 
 function sendViewMiddleware(req, res, next) {
     res.sendView = function (view,param) { 
@@ -25,32 +27,16 @@ function sendViewMiddleware(req, res, next) {
     }
     next();
 }
-
+//Usage of middlewares
 app.use(sendViewMiddleware);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
-    secret: "Your secret key",
+    secret: "SECRETKEY",
     resave: true, 
     saveUninitialized: true 
 }));
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.get('/', function (req, res) {
-    res.sendView("login")
-});
-
-app.get('/login', function (req, res) {
-    res.sendView("login")
-});
-
-app.get('/logout', function (req, res) {
-     //destroy the session
-     req.session.destroy(function(){
-        console.log("User successfully logged out")
-     });
-    res.redirect("/login")
-});
 
 function checkSignIn(req, res, next) {
     //check if the user exists
@@ -63,6 +49,61 @@ function checkSignIn(req, res, next) {
     }
 }
 
+//Get requests
+app.get('/', function (req, res) {
+    res.sendView("login")
+});
+
+app.get('/login', function (req, res) {
+    /* req.flash({
+        type: 'info',
+        message: 'Login page',
+        redirect: false
+      }) */
+    res.sendView("login")
+});
+
+app.get('/logout', function (req, res) {
+     //destroy the session
+     req.session.destroy(function(){
+        console.log("User successfully logged out")
+     });
+    res.redirect("/login")
+});
+app.get('/about',checkSignIn, function (req, res) {
+    res.sendView("about")
+});
+
+app.get('/contact',checkSignIn, function (req, res) {
+    res.sendView("contact")
+});
+
+app.get('/news',checkSignIn, function (req, res) {
+    res.sendView("news")
+});
+
+app.get('/home', checkSignIn,function (req, res) {
+    res.sendView("home")
+});
+app.get('/signup', function (req, res) {
+    res.sendView("signup")
+});
+
+
+//get all users from db
+app.get('/getusers',checkSignIn,function(req,res){
+    User.find().exec(function (err, doc) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            // res.send(doc);
+            res.sendView("users_list",{users_list:doc})
+        }
+    });
+});
+
+    //POST requests
     app.post('/login', function (req, res, next) {
         User.find({'username':req.body.username})
             .then(function(user){
@@ -93,24 +134,6 @@ function checkSignIn(req, res, next) {
             });
     });
 
-    app.get('/about',checkSignIn, function (req, res) {
-        res.sendView("about")
-    });
-
-    app.get('/contact',checkSignIn, function (req, res) {
-        res.sendView("contact")
-    });
-
-    app.get('/news',checkSignIn, function (req, res) {
-        res.sendView("news")
-    });
-
-    app.get('/home', checkSignIn,function (req, res) {
-        res.sendView("home")
-    });
-    app.get('/signup', function (req, res) {
-        res.sendView("signup")
-    });
 
     app.post('/signup', function (req, res,next) {
         if (req.body.username == "" || req.body.password == "") {
@@ -146,7 +169,12 @@ function checkSignIn(req, res, next) {
                 //save the user
                 newUser.save(function (err, Person) {
                     //save the user to a session
-                    req.session.user =newUser;
+                    req.session.user = newUser;
+                    /* req.flash({
+                        type: 'info',
+                        message: 'User registered successfully',
+                        redirect: false
+                      }) */
                     console.log("user registered successfully")
                 });
             })
@@ -159,19 +187,6 @@ function checkSignIn(req, res, next) {
                 next();
             });
         }
-    });
-
-    //get all users from db
-    app.get('/getusers',checkSignIn,function(req,res){
-        User.find().exec(function (err, doc) {
-            if (err) {
-                console.log(err);
-            }
-            else {
-               // res.send(doc);
-                res.sendView("users_list",{users_list:doc})
-            }
-        });
     });
 //bind to a port
 var server = app.listen(3000, function () {
