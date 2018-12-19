@@ -7,18 +7,22 @@
 </head>
 <%include includes/header.html%>
 <body>
-<h2>Users</h2>
+<h2 style="text-align:center;">Users</h2>
     <table class="users_list">
         <tr>
             <th>Name</th>
             <th>Age</th>
             <th>Nationality</th>
+            <th>Edit</th>
+            <th>Delete</th>
         </tr>
         <% users_list.forEach(function(user) { %>
             <tr>
             <td><%= user.name %> </td>
             <td><%= user.age %> </td>
             <td><%= user.nationality %> </td>
+            <td><button class="btn" id="edit_btn" data-id=<%= user._id %> ><i class="fa fa-edit"></i></i></button></td>
+            <td><button class="btn" id="close_btn" data-id=<%= user._id %> ><i class="fa fa-close"></i></button></td>
             </tr>
         <% }); %>
             
