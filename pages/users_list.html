@@ -21,8 +21,16 @@
             <td><%= user.name %> </td>
             <td><%= user.age %> </td>
             <td><%= user.nationality %> </td>
-            <td><button class="btn" id="edit_btn" data-id=<%= user._id %> ><i class="fa fa-edit"></i></i></button></td>
-            <td><button class="btn" id="close_btn" data-id=<%= user._id %> ><i class="fa fa-close"></i></button></td>
+            <td><!-- button class="btn" id="edit_btn" data-id=<%= user._id %> >
+                <i class="fa fa-edit"></i>
+                </button> -->
+                <a href="/user/edit/<%= user._id %>">edit</a>
+            </td>
+            <td><!-- <button class="btn" id="close_btn" data-id=<%= user._id %> >
+                <i class="fa fa-close"></i>
+                </button> -->
+                <a href="/user/delete/<%= user._id %>">delete</a>
+            </td>
             </tr>
         <% }); %>
             

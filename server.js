@@ -103,13 +103,60 @@ app.get('/getusers',checkSignIn,function(req,res){
     });
 });
 
-    //POST requests
+//user edit
+app.get('/user/edit/:userId',checkSignIn, function (req, res) {
+    var userId = req.params.userId;
+    User.find({"_id":userId}).exec(function (err, doc) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            //res.send(doc);
+           res.sendView("user_edit",{users_list:doc})
+        }
+  })
+});
+
+//delete a document
+app.get('/user/delete/:userId',checkSignIn,function(req,res){
+    var userId = req.params.userId;
+    User.deleteOne({"_id":userId}).exec(function(err,doc){
+        if(err){
+            console.log(err);
+        }
+        else{
+            console.log("User deleted successfully");
+            res.redirect("/getusers");                          
+        }
+    });
+});
+
+                        //POST requests//
+
+//user update
+app.post('/user/update',checkSignIn, function (req, res) {
+        var userId =  req.body.user_id;
+        User.findOneAndUpdate({"_id": userId}, {
+            name: req.body.name,
+            age: req.body.age,
+            nationality: req.body.nationality
+        }, function (err) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log("User updated successfully");
+                res.redirect("/getusers");
+        }
+    })
+});
+
     app.post('/login', function (req, res, next) {
         User.find({'username':req.body.username})
             .then(function(user){
                 if((user.length	==  0) || typeof user == 'undefined'){
                     console.log("Username is incorrect")
                     res.send("Username is incorrect")
+                    return false;
                 }
                 req.session.user =user;
                 req.session.username = {username:req.body.username};

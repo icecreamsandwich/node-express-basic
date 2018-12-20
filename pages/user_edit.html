@@ -1,0 +1,36 @@
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <title>User edit</title>
+</head>
+<%include includes/header.html%>
+<body>
+    <div class="form" style="align:center;text-align:center;">
+        <h2>User edit</h2>
+        <% users_list.forEach(function(user) { %>
+        <form action="/user/update/" method="post" id="udpate-form">
+            <input type="text" name="name" value=<%= user.name %>><br><br>
+            <input type="text" name="age" value=<%= user.age %>><br><br>
+            <select name="nationality" placeholder="nationality">
+                <option value=<%= user.nationality %> selected> <%= user.nationality %></option>
+                <option value="India">India</option>
+                <option value="America">America</option>
+                <option value="Australia">Australia</option>
+                <option value="England">England</option>
+                <option value="Africa">Africa</option>
+            </select>
+            <br><br>
+            <input type="hidden" name="user_id" value=<%= user._id %> >
+            <input type="submit" value="Submit">
+        </form>
+        <% }); %>
+    </div>
+    <div class="register">
+        <span><a href="/home">Go back</a> </span>
+    </div>
+    
+</body>
+</html>
