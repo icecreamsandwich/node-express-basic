@@ -5,4 +5,4 @@
 # running the application
 a) Clone the repository `git clone https://github.com/icecreamsandwich/node-express-basic.git` <br>
 b) install all the dependecies : `npm install --save`<br>
-c) start the server : `node server.js`<br>
+c) start the server : `npm run start` OR  `node server.js`<br>
