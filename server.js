@@ -7,6 +7,16 @@ var User = require("./models/user");
 var path = require("path");
 const flash = require("express-flash-notification");
 
+//pusher configurations
+var Pusher = require('pusher');
+var pusher = new Pusher({
+  appId: '680206',
+  key: '73ceba8b748e28aa1869',
+  secret: 'ecddc0d6ccaaf06c2ff1',
+  cluster: 'ap2',
+  encrypted: true
+});
+
 // connect to mongodb
 mongoose.connect(
   "mongodb://localhost/test",
@@ -43,6 +53,7 @@ app.use(
     saveUninitialized: true
   })
 );
+app.use(flash(app));
 app.use(express.static(path.join(__dirname, "public")));
 
 function checkSignIn(req, res, next) {
@@ -61,12 +72,12 @@ app.get("/", function(req, res) {
 });
 
 app.get("/login", function(req, res) {
-  /* req.flash({
+  req.flash({
         type: 'info',
         message: 'Login page',
         redirect: false
-      }) */
-  res.sendView("login");
+      })
+      res.sendView("login");
 });
 
 app.get("/logout", function(req, res) {
@@ -112,6 +123,7 @@ app.get("/user/edit/:userId", checkSignIn, function(req, res) {
   var userId = req.params.userId;
   User.find({ _id: userId }).exec(function(err, doc) {
     if (err) {
+      res.redirect("/getusers");
       console.log(err);
     } else {
       // res.send(doc);
@@ -157,12 +169,22 @@ app.post("/user/update", checkSignIn, function(req, res) {
 });
 
 app.post("/login", function(req, res, next) {
+  let stopFlag = false;
   User.find({ username: req.body.username })
     .then(function(user) {
       if (user.length == 0 || typeof user === "undefined") {
         console.log("Username is incorrect");
-        res.send("Username is incorrect");
-        return false;
+        req.flash({
+          type: 'info',
+          message: 'Username is incorrect',
+          redirect: false
+        })
+        stopFlag = true;
+        pusher.trigger('my-channel', 'my-event', {
+          "message": "Username is incorrect"
+        });
+       // res.send('')
+       // res.sendView("login");
       }
       req.session.user = user;
       req.session.username = { username: req.body.username };
@@ -173,9 +195,13 @@ app.post("/login", function(req, res, next) {
       return bcrypt.compare(req.body.password, userPassword);
     })
     .then(function(samePassword) {
-      if (!samePassword) {
-        res.send("Password is incorrect");
-      } else {
+      if (!samePassword && !stopFlag) {
+       console.log("Password is incorrect");
+       pusher.trigger('my-channel', 'my-event', {
+        "message": "Password is incorrect"
+      });
+       //res.sendView("login");
+      } else if(!stopFlag) {
         console.log("password matched !");
         res.status("200");
         res.sendView("home");

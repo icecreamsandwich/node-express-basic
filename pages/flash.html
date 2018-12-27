@@ -1,5 +1,6 @@
 <div class="alert flash">
         <button type="button" class="close">×</button>
         <i class="fa sign"></i><strong>{{type}}</strong> 
-        <span>{{message}} <%= locals.message %></span>
+        <span><%- locals.flash %> <%= locals.message %></span>
+        <span>{{{message}}}</span>
       </div>

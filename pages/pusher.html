@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<head>
+  <title>Pusher Test</title>
+  <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+  <script src="https://js.pusher.com/4.3/pusher.min.js"></script>
+  <script>
+      $('.alert').hide();
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('73ceba8b748e28aa1869', {
+      cluster: 'ap2',
+      forceTLS: true
+    });
+
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('my-event', function(data) {
+      //alert(JSON.stringify(data));
+      var obj = JSON.parse(JSON.stringify(data));
+      var msg = obj.message;
+      $('.alert').show();
+      $('.notification').html(msg);
+    });
+  </script>
+</head>
+<body>
+  
+    <div class="alert">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+    <strong>Danger!</strong> 
+    <span class="notification"></span>
+    </div>
+</body>
