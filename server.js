@@ -126,7 +126,6 @@ app.get("/user/edit/:userId", checkSignIn, function(req, res) {
       res.redirect("/getusers");
       console.log(err);
     } else {
-      // res.send(doc);
       res.sendView("user_edit", { users_list: doc });
     }
   });
@@ -183,8 +182,6 @@ app.post("/login", function(req, res, next) {
         pusher.trigger('my-channel', 'my-event', {
           "message": "Username is incorrect"
         });
-       // res.send('')
-      // res.redirect('back');
       }
       req.session.user = user;
       req.session.username = { username: req.body.username };
@@ -230,7 +227,11 @@ app.post("/signup", function(req, res, next) {
       } else {
         if (user.length != 0) {
           console.log("username already exists");
-          res.send("username already exists please choose a different one");
+          pusher.trigger('my-channel', 'my-event', {
+            "message": "username already exists please choose a different one",
+            "status": "error",
+          });
+         // res.send("username already exists please choose a different one");
         }
       }
     });
