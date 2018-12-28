@@ -110,3 +110,9 @@ tr:nth-child(even) {background-color: #f2f2f2;}
 .closebtn:hover {
   color: black;
 }
+.error{
+  background-color: #f44336;
+}
+.success{
+  background-color:#45a049;
+}

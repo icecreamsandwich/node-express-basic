@@ -14,7 +14,7 @@ var pusher = new Pusher({
   key: '73ceba8b748e28aa1869',
   secret: 'ecddc0d6ccaaf06c2ff1',
   cluster: 'ap2',
-  encrypted: true
+  //encrypted: true
 });
 
 // connect to mongodb
@@ -184,7 +184,7 @@ app.post("/login", function(req, res, next) {
           "message": "Username is incorrect"
         });
        // res.send('')
-       // res.sendView("login");
+      // res.redirect('back');
       }
       req.session.user = user;
       req.session.username = { username: req.body.username };
@@ -198,9 +198,10 @@ app.post("/login", function(req, res, next) {
       if (!samePassword && !stopFlag) {
        console.log("Password is incorrect");
        pusher.trigger('my-channel', 'my-event', {
-        "message": "Password is incorrect"
+        "message": "Password is incorrect",
+        "status": "error",
       });
-       //res.sendView("login");
+      res.sendView("login");
       } else if(!stopFlag) {
         console.log("password matched !");
         res.status("200");
@@ -215,7 +216,11 @@ app.post("/login", function(req, res, next) {
 app.post("/signup", function(req, res, next) {
   if (req.body.username == "" || req.body.password == "") {
     res.status("400");
-    res.send("Please enter username and password");
+    pusher.trigger('my-channel', 'my-event', {
+      "message": "Please enter username and password",
+      "status": "error",
+    });
+    //res.send("Please enter username and password");
   } else {
     // check username already exists
     User.find({ username: req.body.username }, function(err, user) {
@@ -246,16 +251,15 @@ app.post("/signup", function(req, res, next) {
         newUser.save(function(err, Person) {
           // save the user to a session
           req.session.user = newUser;
-          /* req.flash({
-                        type: 'info',
-                        message: 'User registered successfully',
-                        redirect: false
-                      }) */
           console.log("user registered successfully");
+          pusher.trigger('my-channel', 'my-event', {
+            "message": "user registered successfully",
+            "status": "success",
+          });
         });
       })
       .then(function() {
-        res.redirect("/login");
+        //res.redirect("/login");
       })
       .catch(function(error) {
         console.log("Error saving user: ");
