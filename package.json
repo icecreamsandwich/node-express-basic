@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
+    "build": "rm -rf dist && webpack --mode development",
+    "start": "nodemon ./server.js",
     "prettier": "prettier --write *.js pages"
   },
   "keywords": [],
@@ -20,5 +21,17 @@
     "express-session": "^1.15.6",
     "mongoose": "^5.4.1",
     "pusher": "^2.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.4",
+    "babel-preset-env": "^1.7.0",
+    "html-loader": "^0.5.5",
+    "html-webpack-plugin": "^3.2.0",
+    "webpack": "^4.28.2",
+    "webpack-cli": "^3.1.2",
+    "webpack-node-externals": "^1.7.2"
   }
 }

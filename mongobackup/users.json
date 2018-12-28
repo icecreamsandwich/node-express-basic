@@ -1,0 +1,6 @@
+{"_id":{"$oid":"5c0a8e7fcb6ec510dba235e3"},"username":"muneen","password":"$2a$12$A3.60VJv9io3uBxWaAgs6eepcEL17D1dAMUxvweDsCa.40yu4xaWW","name":"muneeb","age":324,"nationality":"England","__v":0}
+{"_id":{"$oid":"5c0a963b25e2e01178a990d3"},"username":"sudeep","password":"$2a$12$FsEUlXbf2dZ.3SgnKnog6.3.GYb902D7.3TGpWUCQg6oPOMeh78.2","name":"sudeep","age":345,"nationality":"Africa","__v":0}
+{"_id":{"$oid":"5c18f23f391ff5cc15f156b8"},"username":"subees","password":"$2a$12$nS2xdswmCLNLZOZA80q7JeOIOzAk.4BMQOaW/X/fNpg.qvWJ6tERu","name":"subees","age":343,"nationality":"Africa","__v":0}
+{"_id":{"$oid":"5c1ba918d2dd2d0272820da4"},"username":"mathayi","password":"$2b$12$lNoFFdXK4TF1QpOJJYV1Qe/rFZu/fUKCBXCKHuKCWk3rnv2Y2nPjC","name":"mathayi","age":345345,"nationality":"England","__v":0}
+{"_id":{"$oid":"5c1badfe39f9ca053a903907"},"username":"neethu","password":"$2b$12$ammh.KPHyqTOhg2/0F99KeT1na3fnaGJVT40JvV2hnKpAthU/mab.","name":"kinara","age":23423,"nationality":"America","__v":0}
+{"_id":{"$oid":"5c24dd63f1aaf188cd45df8d"},"username":"admin","password":"$2b$12$M5Um4ina3V9mf1QMDi8yYeYWU8CHeS7JFKP6qoZMbYkY0wN6XYIXW","name":"admin","age":2323,"nationality":"Australia","__v":0}

@@ -86,16 +86,14 @@ tr:nth-child(even) {background-color: #f2f2f2;}
 }
 .notification{
   display: block;
-  background-color:#aabba773;
-  width: auto;
-  height: 30px;
+  background-color:#f44336;
+  width: 600px;
+  height: 42px;
+  text-align: center;
+  padding: 16px;
+  border-radius: 5px;
+  margin-left: 500px;
 }
-.alert {
-  padding: 20px;
-  background-color: #f44336;
-  color: white;
-}
-
 .closebtn {
   margin-left: 15px;
   color: white;

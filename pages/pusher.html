@@ -9,7 +9,7 @@
   <script>
 $(document).ready(function(){
     $('.alert').hide();
-        // Enable pusher logging - don't include this in production
+      // Enable pusher logging - don't include this in production
       Pusher.logToConsole = true;
 
       var pusher = new Pusher('73ceba8b748e28aa1869', {
@@ -19,12 +19,11 @@ $(document).ready(function(){
 
       var channel = pusher.subscribe('my-channel');
       channel.bind('my-event', function(data) {
-        //alert(JSON.stringify(data));
         var obj = JSON.parse(JSON.stringify(data));
         var msg = obj.message;
         var status = obj.status;
         $('.alert').show();
-        $('.alert').addClass(status);
+        $('.notification').addClass(status);
         $('.notification').html(msg);
         setTimeout(function(){
           $('.alert').hide();
@@ -36,7 +35,7 @@ $(document).ready(function(){
 <body>
   
     <div class="alert">
-    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-    <span class="notification"></span>
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+      <span class="notification"></span>
     </div>
 </body>

@@ -8,12 +8,12 @@ var path = require("path");
 const flash = require("express-flash-notification");
 
 //pusher configurations
-var Pusher = require('pusher');
+var Pusher = require("pusher");
 var pusher = new Pusher({
-  appId: '680206',
-  key: '73ceba8b748e28aa1869',
-  secret: 'ecddc0d6ccaaf06c2ff1',
-  cluster: 'ap2',
+  appId: "680206",
+  key: "73ceba8b748e28aa1869",
+  secret: "ecddc0d6ccaaf06c2ff1",
+  cluster: "ap2"
   //encrypted: true
 });
 
@@ -73,11 +73,11 @@ app.get("/", function(req, res) {
 
 app.get("/login", function(req, res) {
   req.flash({
-        type: 'info',
-        message: 'Login page',
-        redirect: false
-      })
-      res.sendView("login");
+    type: "info",
+    message: "Login page",
+    redirect: false
+  });
+  res.sendView("login");
 });
 
 app.get("/logout", function(req, res) {
@@ -174,14 +174,15 @@ app.post("/login", function(req, res, next) {
       if (user.length == 0 || typeof user === "undefined") {
         console.log("Username is incorrect");
         req.flash({
-          type: 'info',
-          message: 'Username is incorrect',
+          type: "info",
+          message: "Username is incorrect",
           redirect: false
-        })
-        stopFlag = true;
-        pusher.trigger('my-channel', 'my-event', {
-          "message": "Username is incorrect"
         });
+        stopFlag = true;
+        pusher.trigger("my-channel", "my-event", {
+          message: "Username is incorrect"
+        });
+        //  res.sendView("login");
       }
       req.session.user = user;
       req.session.username = { username: req.body.username };
@@ -193,13 +194,13 @@ app.post("/login", function(req, res, next) {
     })
     .then(function(samePassword) {
       if (!samePassword && !stopFlag) {
-       console.log("Password is incorrect");
-       pusher.trigger('my-channel', 'my-event', {
-        "message": "Password is incorrect",
-        "status": "error",
-      });
-      res.sendView("login");
-      } else if(!stopFlag) {
+        console.log("Password is incorrect");
+        pusher.trigger("my-channel", "my-event", {
+          message: "Password is incorrect",
+          status: "error"
+        });
+        // res.sendView("login");
+      } else if (!stopFlag) {
         console.log("password matched !");
         res.status("200");
         res.sendView("home");
@@ -213,9 +214,9 @@ app.post("/login", function(req, res, next) {
 app.post("/signup", function(req, res, next) {
   if (req.body.username == "" || req.body.password == "") {
     res.status("400");
-    pusher.trigger('my-channel', 'my-event', {
-      "message": "Please enter username and password",
-      "status": "error",
+    pusher.trigger("my-channel", "my-event", {
+      message: "Please enter username and password",
+      status: "error"
     });
     //res.send("Please enter username and password");
   } else {
@@ -227,11 +228,11 @@ app.post("/signup", function(req, res, next) {
       } else {
         if (user.length != 0) {
           console.log("username already exists");
-          pusher.trigger('my-channel', 'my-event', {
-            "message": "username already exists please choose a different one",
-            "status": "error",
+          pusher.trigger("my-channel", "my-event", {
+            message: "username already exists please choose a different one",
+            status: "error"
           });
-         // res.send("username already exists please choose a different one");
+          // res.send("username already exists please choose a different one");
         }
       }
     });
@@ -253,9 +254,9 @@ app.post("/signup", function(req, res, next) {
           // save the user to a session
           req.session.user = newUser;
           console.log("user registered successfully");
-          pusher.trigger('my-channel', 'my-event', {
-            "message": "user registered successfully",
-            "status": "success",
+          pusher.trigger("my-channel", "my-event", {
+            message: "user registered successfully",
+            status: "success"
           });
         });
       })
