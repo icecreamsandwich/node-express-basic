@@ -23,8 +23,8 @@ $(document).ready(function(){
         var msg = obj.message;
         var status = obj.status;
         $('.alert').show();
-        $('.notification').addClass(status);
-        $('.notification').html(msg);
+        var span = $('<span class="notification '+status+'">'+msg+'</span>')
+        $('.alert').html(span)
         setTimeout(function(){
           $('.alert').hide();
         },5000);
@@ -35,7 +35,5 @@ $(document).ready(function(){
 <body>
   
     <div class="alert">
-      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-      <span class="notification"></span>
     </div>
 </body>
