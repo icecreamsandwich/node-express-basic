@@ -7,7 +7,7 @@ a) Clone the repository `git clone https://github.com/icecreamsandwich/node-expr
 b) install all the dependecies : `npm install --save`<br>
 c) start the server : `npm run start` OR  `node server.js`<br>
 
-# running prettify
-  `npm run prettify`
+# running prettier
+  `npm run prettier`
 # running eslint
   `npm run eslint`
