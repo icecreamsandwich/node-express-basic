@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-console */
 import express from 'express';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
@@ -22,7 +24,8 @@ var pusher = new Pusher({
 mongoose.connect(
 	'mongodb://localhost/test',
 	{ useNewUrlParser: true, useCreateIndex: true },
-	function(req, res) {
+	// eslint-disable-next-line no-unused-vars
+	function (req, res) {
 		console.log('connected to mongo!!');
 	}
 );
@@ -37,7 +40,7 @@ app.set('view options', { pretty: true });
 app.locals.pretty = true;
 
 function sendViewMiddleware(req, res, next) {
-	res.sendView = function(view, param) {
+	res.sendView = function (view, param) {
 		var session = req.session.username ? req.session.username : '';
 		if (param && param != '') {
 			res.render(__dirname + '/pages/' + view + '.html', param);
@@ -70,11 +73,11 @@ function checkSignIn(req, res, next) {
 }
 
 // Get requests
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
 	res.sendView('login');
 });
 
-app.get('/login', function(req, res) {
+app.get('/login', function (req, res) {
 	req.flash({
 		type: 'info',
 		message: 'Login page',
@@ -83,35 +86,35 @@ app.get('/login', function(req, res) {
 	res.sendView('login');
 });
 
-app.get('/logout', function(req, res) {
+app.get('/logout', function (req, res) {
 	// destroy the session
-	req.session.destroy(function() {
+	req.session.destroy(function () {
 		console.log('User successfully logged out');
 	});
 	res.redirect('/login');
 });
-app.get('/about', checkSignIn, function(req, res) {
+app.get('/about', checkSignIn, function (req, res) {
 	res.sendView('about');
 });
 
-app.get('/contact', checkSignIn, function(req, res) {
+app.get('/contact', checkSignIn, function (req, res) {
 	res.sendView('contact');
 });
 
-app.get('/news', checkSignIn, function(req, res) {
+app.get('/news', checkSignIn, function (req, res) {
 	res.sendView('news');
 });
 
-app.get('/home', checkSignIn, function(req, res) {
+app.get('/home', checkSignIn, function (req, res) {
 	res.sendView('home');
 });
-app.get('/signup', function(req, res) {
+app.get('/signup', function (req, res) {
 	res.sendView('signup');
 });
 
 // get all users from db
-app.get('/getusers', checkSignIn, function(req, res) {
-	User.find().exec(function(err, doc) {
+app.get('/getusers', checkSignIn, function (req, res) {
+	User.find().exec(function (err, doc) {
 		if (err) {
 			console.log(err);
 		} else {
@@ -122,9 +125,9 @@ app.get('/getusers', checkSignIn, function(req, res) {
 });
 
 // user edit
-app.get('/user/edit/:userId', checkSignIn, function(req, res) {
+app.get('/user/edit/:userId', checkSignIn, function (req, res) {
 	var userId = req.params.userId;
-	User.find({ _id: userId }).exec(function(err, doc) {
+	User.find({ _id: userId }).exec(function (err, doc) {
 		if (err) {
 			res.redirect('/getusers');
 			console.log(err);
@@ -135,9 +138,9 @@ app.get('/user/edit/:userId', checkSignIn, function(req, res) {
 });
 
 // delete a document
-app.get('/user/delete/:userId', checkSignIn, function(req, res) {
+app.get('/user/delete/:userId', checkSignIn, function (req, res) {
 	var userId = req.params.userId;
-	User.deleteOne({ _id: userId }).exec(function(err, doc) {
+	User.deleteOne({ _id: userId }).exec(function (err) {
 		if (err) {
 			console.log(err);
 		} else {
@@ -150,7 +153,7 @@ app.get('/user/delete/:userId', checkSignIn, function(req, res) {
 // POST requests//
 
 // user update
-app.post('/user/update', checkSignIn, function(req, res) {
+app.post('/user/update', checkSignIn, function (req, res) {
 	var userId = req.body.user_id;
 	User.findOneAndUpdate(
 		{ _id: userId },
@@ -159,7 +162,7 @@ app.post('/user/update', checkSignIn, function(req, res) {
 			age: req.body.age,
 			nationality: req.body.nationality
 		},
-		function(err) {
+		function (err) {
 			if (err) {
 				console.log(err);
 			} else {
@@ -170,10 +173,10 @@ app.post('/user/update', checkSignIn, function(req, res) {
 	);
 });
 
-app.post('/login', function(req, res, next) {
+app.post('/login', function (req, res) {
 	let stopFlag = false;
 	User.find({ username: req.body.username })
-		.then(function(user) {
+		.then(function (user) {
 			if (user.length == 0 || typeof user === 'undefined') {
 				console.log('Username is incorrect');
 				req.flash({
@@ -195,7 +198,7 @@ app.post('/login', function(req, res, next) {
 			});
 			return bcrypt.compare(req.body.password, userPassword);
 		})
-		.then(function(samePassword) {
+		.then(function (samePassword) {
 			if (!samePassword && !stopFlag) {
 				console.log('Password is incorrect');
 				pusher.trigger('my-channel', 'my-event', {
@@ -209,12 +212,12 @@ app.post('/login', function(req, res, next) {
 				res.sendView('home');
 			}
 		})
-		.catch(function(err) {
+		.catch(function (err) {
 			console.log('Error:' + err);
 		});
 });
 
-app.post('/signup', function(req, res, next) {
+app.post('/signup', function (req, res, next) {
 	var stopExec = false;
 	if (req.body.username == '' || req.body.password == '') {
 		res.status('400');
@@ -225,7 +228,7 @@ app.post('/signup', function(req, res, next) {
 		//res.send("Please enter username and password");
 	} else {
 		// check username already exists
-		User.find({ username: req.body.username }, function(err, user) {
+		User.find({ username: req.body.username }, function (err, user) {
 			if (err) {
 				console.log('Signup error');
 				return done(err);
@@ -245,7 +248,7 @@ app.post('/signup', function(req, res, next) {
 			var BCRYPT_SALT_ROUNDS = 12;
 			bcrypt
 				.hash(req.body.password, BCRYPT_SALT_ROUNDS)
-				.then(function(hashedPassword) {
+				.then(function (hashedPassword) {
 					var newUser = new User({
 						username: req.body.username,
 						password: hashedPassword,
@@ -255,7 +258,7 @@ app.post('/signup', function(req, res, next) {
 					});
 
 					// save the user
-					newUser.save(function(err, Person) {
+					newUser.save(function () {
 						// save the user to a session
 						req.session.user = newUser;
 						console.log('user registered successfully');
@@ -265,10 +268,11 @@ app.post('/signup', function(req, res, next) {
 						});
 					});
 				})
-				.then(function() {
+				.then(function () {
 					//res.redirect("/login");
 				})
-				.catch(function(error) {
+				.catch(function (error) {
+					// eslint-disable-next-line no-console
 					console.log('Error saving user: ');
 					console.log(error);
 					next();
@@ -277,8 +281,9 @@ app.post('/signup', function(req, res, next) {
 	}
 });
 // bind to a port
-var server = app.listen(3000, function() {
+var server = app.listen(3000, function () {
 	var host = server.address().address;
 	var port = server.address().port;
+	// eslint-disable-next-line no-console
 	console.log(' app listening at http://%s:%s', host, port);
 });
