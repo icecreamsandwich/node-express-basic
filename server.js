@@ -1,11 +1,12 @@
-var express = require('express');
-var mongoose = require('mongoose');
-var bodyParser = require('body-parser');
-var bcrypt = require('bcrypt');
-var session = require('express-session');
+import express from 'express';
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
+import session from 'express-session';
+import bodyParser from 'body-parser';
+import path from 'path';
+import flash from 'express-flash-notification';
+//import user model
 var User = require('./models/user');
-var path = require('path');
-const flash = require('express-flash-notification');
 
 //pusher configurations
 var Pusher = require('pusher');
